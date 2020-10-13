@@ -15,6 +15,7 @@ router.put('/:id', [
     const {id} = req.params;
     const taskUpdated = {
         title: req.body.title,
+        updated_at: new Date(),
     };
 
     let task;
@@ -62,7 +63,10 @@ router.put('/:id/check', [
     }
 
     try {
-        await knex('task').update({done: ! task.done}).where({id: id});
+        await knex('task').update({
+            done: ! task.done,
+            updated_at: new Date(),
+        }).where({id: id});
     } catch (e) {
         return res.status(500).json(e);
     }

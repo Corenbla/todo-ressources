@@ -72,6 +72,7 @@ router.put('/:id', [
     const {id} = req.params;
     const listUpdated = {
         title: req.body.title,
+        updated_at: new Date(),
     };
 
     let list;
