@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
 });
 
 // GET by ID
-router.get('/:id', [param('id').isInt({min: 0})], async (req, res) => {
+router.get('/:id', [param('id', 'Expected positive integer for param : id').isInt({min: 0})], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({errors: errors.array()});
@@ -40,7 +40,12 @@ router.get('/:id', [param('id').isInt({min: 0})], async (req, res) => {
 });
 
 // POST Create list
-router.post('/', [body('title').isString()], async (req, res) => {
+router.post('/', [body('title', 'Expected string for key : title').isString()], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({errors: errors.array()});
+    }
+
     const list = {
         title: req.body.title,
     };
@@ -56,9 +61,14 @@ router.post('/', [body('title').isString()], async (req, res) => {
 
 // PUT Update list
 router.put('/:id', [
-    param('id').isInt({min: 0}),
-    body('title').isString(),
+    param('id', 'Expected positive integer for param : id').isInt({min: 0}),
+    body('title', 'Expected string for key : title').isString(),
 ], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({errors: errors.array()});
+    }
+
     const {id} = req.params;
     const listUpdated = {
         title: req.body.title,
@@ -78,6 +88,36 @@ router.put('/:id', [
 
     try {
         await knex('list').update(listUpdated).where({id: id});
+    } catch (e) {
+        return res.status(500).json(e);
+    }
+
+    return res.sendStatus(200);
+});
+
+// DELETE list
+router.delete('/:id', [param('id', 'Expected positive integer for param : id').isInt({min: 0})], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({errors: errors.array()});
+    }
+
+    const {id} = req.params;
+
+    let list;
+
+    try {
+        list = await knex('list').where({id: id});
+    } catch (e) {
+        return res.status(500).json(e);
+    }
+
+    if (!list.length) {
+        return res.sendStatus(404);
+    }
+
+    try {
+        await knex('list').delete().where({id: id});
     } catch (e) {
         return res.status(500).json(e);
     }
