@@ -2,6 +2,7 @@ const morgan = require('morgan');
 const express = require('express');
 const bodyParser = require('body-parser');
 const listRouter = require('./app/lists');
+const taskRouter = require('./app/tasks');
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use(
     }),
 );
 app.use('/api/v1/list', listRouter);
+app.use('/api/v1/task', taskRouter);
 
 // Load root route
 app.get('/', (req, res) => res.status(200).json({message: 'Success !'}));
