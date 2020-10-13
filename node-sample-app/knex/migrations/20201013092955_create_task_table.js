@@ -5,7 +5,7 @@ exports.up = function(knex) {
         tableBuilder.string('title');
         tableBuilder.boolean('done');
         tableBuilder.integer('list_id').unsigned();
-        tableBuilder.foreign('list_id').references('list.id').onDelete('cascade');
+        tableBuilder.foreign('list_id').references('list.id').inTable('list').onDelete('cascade');
         tableBuilder.timestamps(true, true);
     }));
 };
