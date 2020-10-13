@@ -70,4 +70,36 @@ router.put('/:id/check', [
     return res.sendStatus(200);
 });
 
+// DELETE task
+router.delete('/:id', [
+    param('id', 'Expected positive integer for param : id').isInt({min: 0}),
+], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({errors: errors.array()});
+    }
+
+    const {id} = req.params;
+
+    let task;
+
+    try {
+        task = await knex('task').where({id: id});
+    } catch (e) {
+        return res.status(500).json(e);
+    }
+
+    if (!task.length) {
+        return res.sendStatus(404);
+    }
+
+    try {
+        await knex('task').delete().where({id: id});
+    } catch (e) {
+        return res.status(500).json(e);
+    }
+
+    return res.sendStatus(200);
+});
+
 module.exports = router;
