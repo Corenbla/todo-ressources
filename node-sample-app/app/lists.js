@@ -125,4 +125,24 @@ router.delete('/:id', [param('id', 'Expected positive integer for param : id').i
     return res.sendStatus(200);
 });
 
+// GET all task by list ID
+router.get('/:id/task', [param('id', 'Expected positive integer for param : id').isInt({min: 0})], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({errors: errors.array()});
+    }
+
+    const listId = req.params.id;
+
+    let tasks;
+
+    try {
+        tasks = await knex('task').where('list_id', listId);
+    } catch (e) {
+        return res.status(500).json(e);
+    }
+
+    return res.status(200).json(tasks);
+});
+
 module.exports = router;
