@@ -1,3 +1,23 @@
+# Installation de l'application Node-Sample-App
+ 
+````shell script
+yarn install
+````
+
+```shell script
+# Garder cette commande active
+yarn docker:dev
+```
+
+````shell script
+knex migration:latest
+````
+
+```shell script
+knex seed:run
+```
+
+
 # Ressources cours D21 - Node/Electron
 
 ## Nodejs
